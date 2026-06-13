@@ -1,0 +1,95 @@
+{% comment %}
+  Cool Story — footer. Zine mode (black), Mark C seal as large
+  semi-transparent watermark, full corrected social link set, clean nav.
+{% endcomment %}
+
+<footer class="color-{{ section.settings.color_scheme }} cs-footer cs-on-dark">
+  <div class="cs-footer__watermark" aria-hidden="true"></div>
+  <div class="cs-footer__inner">
+    <div class="cs-footer__col cs-footer__col--about">
+      <p class="cs-footer__brand">Cool Story</p>
+      <p class="cs-footer__tagline cs-eyebrow">Games, Media, and Artifacts · San Diego, CA</p>
+      <p class="cs-footer__blurb">{{ section.settings.blurb }}</p>
+    </div>
+    <nav class="cs-footer__col" aria-label="Footer">
+      <p class="cs-footer__heading cs-eyebrow">Around the shop</p>
+      <ul class="cs-footer__menu">
+        {% for link in linklists[section.settings.menu].links %}
+          <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+        {% endfor %}
+      </ul>
+    </nav>
+    <div class="cs-footer__col">
+      <p class="cs-footer__heading cs-eyebrow">Find us</p>
+      <ul class="cs-footer__social" aria-label="Social links">
+        <li><a href="https://www.instagram.com/coolstory.sd" target="_blank" rel="me noopener">Instagram</a></li>
+        <li><a href="https://www.tiktok.com/@coolstorygames" target="_blank" rel="me noopener">TikTok</a></li>
+        <li><a href="https://bsky.app/profile/coolstorygames.bsky.social" target="_blank" rel="me noopener">Bluesky</a></li>
+        <li><a href="https://www.twitch.tv/coolstory_games" target="_blank" rel="me noopener">Twitch</a></li>
+        <li><a href="https://www.youtube.com/@coolstorygames" target="_blank" rel="me noopener">YouTube</a></li>
+        <li><a href="https://www.discogs.com/seller/CoolStory/profile" target="_blank" rel="me noopener">Discogs</a></li>
+        <li><a href="https://www.ebay.com/usr/coolstory" target="_blank" rel="me noopener">eBay</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+{% stylesheet %}
+.cs-footer {
+  position: relative;
+  background: #000000;
+  padding: clamp(3rem, 7vw, 5rem) 1.5rem 2.5rem;
+  overflow: hidden;
+}
+.cs-footer__watermark {
+  position: absolute;
+  right: -6rem; bottom: -6rem;
+  width: 28rem; height: 28rem;
+  background: url('{{ 'cs-seal-cream.png' | asset_url }}') center / contain no-repeat;
+  opacity: 0.14;
+  pointer-events: none;
+}
+.cs-footer__inner {
+  position: relative;
+  max-width: 70rem; margin: 0 auto;
+  display: grid; gap: 2.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+}
+.cs-footer__brand {
+  font-family: var(--font-display, sans-serif);
+  color: #F860C0;
+  font-size: 2rem; text-transform: uppercase; margin: 0 0 0.25rem;
+}
+.cs-footer__tagline { color: #90D820; margin: 0 0 0.75rem; }
+.cs-footer__blurb { color: #F8F8F0; font-size: 0.9375rem; line-height: 1.5; max-width: 32ch; }
+.cs-footer__heading { color: #F878F0; margin: 0 0 0.75rem; }
+.cs-footer__menu, .cs-footer__social { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.5rem; }
+.cs-footer__menu a, .cs-footer__social a {
+  color: #F8F8F0; text-decoration: none; font-size: 0.9375rem;
+}
+.cs-footer__menu a:hover, .cs-footer__social a:hover { color: #F860C0; text-decoration: underline; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "CS Footer",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-5"
+    },
+    {
+      "type": "textarea",
+      "id": "blurb",
+      "label": "Footer blurb",
+      "default": "Indie game, vinyl, and collectibles store building toward a brick-and-mortar community space. Every order helps get us there. <3"
+    },
+    { "type": "link_list", "id": "menu", "label": "Footer menu", "default": "footer" }
+  ],
+  "enabled_on": { "groups": ["footer"], "templates": ["*"] },
+  "presets": [{ "name": "CS Footer" }]
+}
+{% endschema %}

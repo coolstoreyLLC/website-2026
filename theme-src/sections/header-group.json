@@ -1,0 +1,99 @@
+{
+  "type": "header",
+  "name": "Header",
+  "sections": {
+    "cs_announcement": {
+      "type": "cs-announcement-bar",
+      "blocks": {
+        "ann_event": {
+          "type": "item",
+          "settings": {
+            "text": "SD Card Show · San Diego, CA",
+            "link": "https://www.instagram.com/p/DR2iaJuklP8/"
+          }
+        },
+        "ann_drops": {
+          "type": "item",
+          "settings": { "text": "New MTG drops in the case" }
+        },
+        "ann_local": {
+          "type": "item",
+          "settings": { "text": "Support your local startup game store" }
+        }
+      },
+      "block_order": ["ann_event", "ann_drops", "ann_local"],
+      "settings": { "speed": 25 }
+    },
+    "header_section": {
+      "type": "header",
+      "blocks": {
+        "header-logo": {
+          "type": "_header-logo",
+          "static": true,
+          "settings": {
+            "hide_logo_on_home_page": false,
+            "padding-block-start": 4,
+            "padding-block-end": 4,
+            "padding-inline-start": 13,
+            "padding-inline-end": 56
+          },
+          "blocks": {}
+        },
+        "header-menu": {
+          "type": "_header-menu",
+          "static": true,
+          "settings": {
+            "menu": "cs-main-dev",
+            "color_scheme": "scheme-1",
+            "type_font_primary_size": "1rem",
+            "menu_font_style": "inverse_large",
+            "type_font_primary_link": "heading",
+            "type_case_primary_link": "uppercase",
+            "menu_style": "text",
+            "featured_products_aspect_ratio": "1 / 1",
+            "featured_collections_aspect_ratio": "16 / 9",
+            "image_border_radius": 0,
+            "navigation_bar": false,
+            "color_scheme_navigation_bar": "",
+            "drawer_accordion": true,
+            "drawer_accordion_expand_first": false,
+            "drawer_dividers": false
+          },
+          "blocks": {}
+        }
+      },
+      "custom_css": [],
+      "settings": {
+        "logo_position": "left",
+        "menu_position": "left",
+        "menu_row": "top",
+        "show_search": true,
+        "search_position": "right",
+        "search_row": "top",
+        "show_country": true,
+        "country_selector_style": true,
+        "show_language": true,
+        "localization_font": "heading",
+        "localization_font_size": "1rem",
+        "localization_position": "right",
+        "localization_row": "top",
+        "section_width": "page-width",
+        "section_height": "standard",
+        "enable_sticky_header": "always",
+        "divider_width": 0,
+        "divider_size": "page-width",
+        "border_width": 0,
+        "color_scheme_top": "scheme-2",
+        "color_scheme_bottom": "",
+        "color_scheme_transparent": "scheme-2",
+        "enable_transparent_header_home": false,
+        "home_color_scheme": "default",
+        "enable_transparent_header_product": false,
+        "product_color_scheme": "default",
+        "enable_transparent_header_collection": false,
+        "collection_color_scheme": "default"
+      }
+    }
+  },
+  "order": ["cs_announcement", "header_section"]
+}

@@ -1,0 +1,90 @@
+{% comment %}
+  Cool Story — scrolling announcement marquee.
+  CSS-only animation; static (no scroll) when prefers-reduced-motion is set.
+{% endcomment %}
+
+<div class="color-{{ section.settings.color_scheme }} cs-announce cs-marquee" style="--cs-marquee-speed: {{ section.settings.speed }}s;">
+  <div class="cs-marquee__inner">
+    {% for i in (1..2) %}
+      <span class="cs-announce__run" {% if forloop.index > 1 %}aria-hidden="true"{% endif %}>
+        {%- for block in section.blocks -%}
+          <span class="cs-announce__item" {{ block.shopify_attributes }}>
+            {%- if block.settings.link != blank -%}
+              <a href="{{ block.settings.link }}">{{ block.settings.text }}</a>
+            {%- else -%}
+              {{ block.settings.text }}
+            {%- endif -%}
+          </span>
+          <span class="cs-announce__dot" aria-hidden="true">·</span>
+        {%- endfor -%}
+      </span>
+    {% endfor %}
+  </div>
+</div>
+
+{% stylesheet %}
+.cs-announce {
+  background: #000000;
+  color: #F8F8F0;
+  font-family: var(--font-blackletter, serif);
+  font-weight: 700;
+  font-size: 1.0625rem;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  padding: 0.55rem 0;
+}
+.cs-announce__run { display: inline-flex; align-items: center; }
+.cs-announce__item { padding: 0 1.25rem; }
+.cs-announce__item a { color: #C0F870; text-decoration: underline; text-underline-offset: 3px; }
+.cs-announce__item a:hover { color: #F860C0; }
+.cs-announce__dot { color: #90D820; }
+@media (prefers-reduced-motion: reduce) {
+  /* show a single non-moving run; the duplicate is clipped */
+  .cs-announce { text-align: center; }
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "CS Announcement Marquee",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-5"
+    },
+    {
+      "type": "range",
+      "id": "speed",
+      "label": "Scroll duration (seconds, higher = slower)",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "default": 25
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Announcement",
+      "settings": [
+        { "type": "text", "id": "text", "label": "Text", "default": "Support your local startup game store" },
+        { "type": "url", "id": "link", "label": "Link (optional)" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "CS Announcement Marquee",
+      "blocks": [
+        { "type": "item", "settings": { "text": "SD Card Show · San Diego, CA" } },
+        { "type": "item", "settings": { "text": "New MTG drops in the case" } },
+        { "type": "item", "settings": { "text": "Support your local startup game store" } }
+      ]
+    }
+  ],
+  "enabled_on": { "groups": ["header"], "templates": ["*"] }
+}
+{% endschema %}

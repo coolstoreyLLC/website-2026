@@ -1,0 +1,104 @@
+{% comment %}
+  Cool Story — IRL events.
+  Dark "zine mode" field. Event content lives in section blocks
+  (editable in the theme editor) — no dates hardcoded in the template.
+{% endcomment %}
+
+<div class="color-{{ section.settings.color_scheme }} cs-events cs-on-dark">
+  <div class="cs-events__inner">
+    <p class="cs-eyebrow cs-events__eyebrow">{{ section.settings.eyebrow }}</p>
+    <h2 class="cs-events__heading">{{ section.settings.heading }}</h2>
+    <div class="cs-events__list">
+      {% for block in section.blocks %}
+        <div class="cs-events__card" {{ block.shopify_attributes }}>
+          <span class="cs-events__date cs-eyebrow">{{ block.settings.date }}</span>
+          <span class="cs-events__name">{{ block.settings.name }}</span>
+          <span class="cs-events__location">{{ block.settings.location }}</span>
+          {% if block.settings.url != blank %}
+            <a class="cs-btn" href="{{ block.settings.url }}" target="_blank" rel="noopener">
+              {{ block.settings.link_label | default: 'Details' }}
+            </a>
+          {% endif %}
+        </div>
+      {% else %}
+        <p class="cs-events__empty">Nothing on the calendar right now — check back soon. &lt;3</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+.cs-events { background: #000000; padding: clamp(2.5rem, 6vw, 4.5rem) 1.5rem; }
+.cs-events__inner { max-width: 70rem; margin: 0 auto; }
+.cs-events__eyebrow { color: #90D820; }
+.cs-events__heading {
+  font-family: var(--font-display, sans-serif);
+  font-weight: 400;
+  color: #F8F8F0;
+  font-size: clamp(1.75rem, 3.5vw, 2.75rem);
+  text-transform: uppercase;
+  margin: 0.25rem 0 1.5rem;
+}
+.cs-events__list { display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr)); }
+.cs-events__card {
+  border: 2px solid #F8F8F0;
+  padding: 1.25rem;
+  display: grid; gap: 0.5rem; justify-items: start;
+}
+.cs-events__date { color: #F878F0; }
+.cs-events__name {
+  font-family: var(--font-display, sans-serif);
+  color: #F8F8F0;
+  font-size: clamp(1.25rem, 2.4vw, 1.75rem);
+  text-transform: uppercase;
+  line-height: 1.1;
+}
+.cs-events__location { color: #F8F8F0; font-size: 0.9375rem; }
+.cs-events__empty { color: #F8F8F0; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "CS IRL Events",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-5"
+    },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Come say hi" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "IRL Events" }
+  ],
+  "blocks": [
+    {
+      "type": "event",
+      "name": "Event",
+      "settings": [
+        { "type": "text", "id": "name", "label": "Event name", "default": "Event name" },
+        { "type": "text", "id": "date", "label": "Date", "default": "Month 00" },
+        { "type": "text", "id": "location", "label": "Location", "default": "San Diego, CA" },
+        { "type": "url", "id": "url", "label": "Link" },
+        { "type": "text", "id": "link_label", "label": "Link label", "default": "Details" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "CS IRL Events",
+      "blocks": [
+        {
+          "type": "event",
+          "settings": {
+            "name": "San Diego RocketCon",
+            "date": "March 14–15",
+            "location": "Del Mar Fairgrounds · San Diego, CA",
+            "link_label": "Learn more"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

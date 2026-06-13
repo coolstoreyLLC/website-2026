@@ -1,0 +1,172 @@
+/* ------------------------------------------------------------------
+   Cool Story — brand tokens & shared components
+   Source of truth: BRAND.md §3 (color), §4 (type), §5 (motifs)
+   NOTE: hex values are PNG-sampled approximations — swap in true
+   brand values when Simon confirms them from source files.
+   ------------------------------------------------------------------ */
+
+@font-face {
+  font-family: 'RC Rocket';
+  src: url('rc-rocket.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* core palette */
+  --cs-slime: #C0F870;
+  --cs-slime-bold: #90D820;
+  --cs-hot-pink: #F860C0;
+  --cs-red: #F80800;
+  --cs-violet: #5810E8;
+  --cs-violet-soft: #8850F8;
+  --cs-purple-deep: #482880;
+  --cs-periwinkle: #5058F8;
+  --cs-orchid: #F878F0;
+  --cs-seafoam: #50C898;
+  --cs-cream: #F8F8F0;
+  --cs-sage: #E0E8C8;
+  --cs-pink-wash: #F8C0E0;
+  --cs-black: #000000;
+
+  /* semantic */
+  --color-bg: var(--cs-cream);
+  --color-text: var(--cs-black);
+  --color-accent: var(--cs-hot-pink);
+  --color-accent-2: var(--cs-violet);
+  --color-success: var(--cs-slime-bold);
+  --shadow-offset: 4px 4px 0; /* hard long-shadow device, no blur */
+
+  /* typography */
+  --font-display: 'RC Rocket', 'Arial Narrow', sans-serif;
+  --font-label: 'Audiowide', sans-serif;
+  --font-body-cs: 'Work Sans', sans-serif;
+  --font-blackletter: 'UnifrakturCook', serif;
+
+  /* override Heritage preset families (theme-styles-variables.liquid) */
+  --font-body--family: var(--font-body-cs);
+  /* nav links & label-face contexts use the theme "heading" slot */
+  --font-heading--family: var(--font-label);
+  --font-heading--weight: 400;
+  --font-h1--family: var(--font-display);
+  --font-h2--family: var(--font-display);
+  --font-h3--family: var(--font-display);
+  --font-h4--family: var(--font-body-cs);
+  --font-h5--family: var(--font-body-cs);
+  --font-h6--family: var(--font-label);
+  --font-h1--weight: 400;
+  --font-h2--weight: 400;
+  --font-h3--weight: 400;
+}
+
+/* ---- shared brand components ------------------------------------ */
+
+/* eyebrow / label face */
+.cs-eyebrow {
+  font-family: var(--font-label);
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* brand button: hard 45° shadow, no blur */
+.cs-btn {
+  display: inline-block;
+  font-family: var(--font-label);
+  font-size: 0.875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: var(--cs-black);
+  background: var(--cs-hot-pink);
+  border: 2px solid var(--cs-black);
+  padding: 0.9rem 1.75rem;
+  box-shadow: var(--shadow-offset) var(--cs-black);
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.cs-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--cs-black);
+}
+.cs-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 2px 2px 0 var(--cs-black);
+}
+.cs-btn--slime { background: var(--cs-slime-bold); }
+.cs-btn--cream { background: var(--cs-cream); }
+
+/* on dark fields the shadow flips to slime for visibility */
+.cs-on-dark .cs-btn {
+  box-shadow: var(--shadow-offset) var(--cs-slime-bold);
+}
+.cs-on-dark .cs-btn:hover { box-shadow: 6px 6px 0 var(--cs-slime-bold); }
+
+/* product / editorial card with long-shadow hover pop */
+.cs-card {
+  background: var(--cs-cream);
+  border: 2px solid var(--cs-black);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.cs-card:hover,
+.cs-card:focus-within {
+  transform: translate(-3px, -3px);
+  box-shadow: 7px 7px 0 var(--cs-black);
+}
+
+/* checkerboard pixel-dissolve feedback (Mark D glitch motif) */
+.cs-dissolve { position: relative; overflow: hidden; }
+.cs-dissolve::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(45deg, var(--cs-black) 25%, transparent 25%, transparent 75%, var(--cs-black) 75%),
+    linear-gradient(45deg, var(--cs-black) 25%, transparent 25%, transparent 75%, var(--cs-black) 75%);
+  background-size: 8px 8px;
+  background-position: 0 0, 4px 4px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .cs-dissolve.cs-dissolving::after {
+    animation: cs-checker-dissolve 0.45s steps(4, end);
+  }
+}
+@keyframes cs-checker-dissolve {
+  0% { opacity: 0; }
+  35% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* CSS-only marquee */
+.cs-marquee {
+  overflow: hidden;
+  white-space: nowrap;
+}
+.cs-marquee__inner {
+  display: inline-flex;
+  white-space: nowrap;
+  will-change: transform;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .cs-marquee__inner {
+    animation: cs-marquee var(--cs-marquee-speed, 25s) linear infinite;
+  }
+}
+@keyframes cs-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* warped-checkerboard divider (Wallpaper motif, subtle) */
+.cs-checker-divider {
+  height: 14px;
+  background-image:
+    linear-gradient(45deg, var(--cs-black) 25%, transparent 25%, transparent 75%, var(--cs-black) 75%),
+    linear-gradient(45deg, var(--cs-black) 25%, transparent 25%, transparent 75%, var(--cs-black) 75%);
+  background-size: 14px 14px;
+  background-position: 0 0, 7px 7px;
+  opacity: 0.9;
+}

@@ -1,0 +1,119 @@
+{% comment %}
+  Cool Story — category tiles.
+  Solid brand-color fields, NO stock photography (per SITE_DIRECTION §5).
+  Tile titles render in RC Rocket. Text color per tile keeps WCAG AA:
+  light fields pair with black, dark fields pair with cream.
+{% endcomment %}
+
+<div class="color-{{ section.settings.color_scheme }} cs-catgrid">
+  <div class="cs-catgrid__grid">
+    {% for block in section.blocks %}
+      <a
+        class="cs-catgrid__tile"
+        href="{{ block.settings.link }}"
+        style="background: {{ block.settings.bg }}; color: {{ block.settings.text_color }};"
+        {{ block.shopify_attributes }}
+      >
+        <span class="cs-catgrid__label cs-eyebrow">{{ block.settings.eyebrow }}</span>
+        <span class="cs-catgrid__title">{{ block.settings.title }}</span>
+      </a>
+    {% endfor %}
+  </div>
+</div>
+
+{% stylesheet %}
+.cs-catgrid { padding: clamp(2rem, 5vw, 4rem) 1.5rem; background: #F8F8F0; }
+.cs-catgrid__grid {
+  max-width: 70rem; margin: 0 auto;
+  display: grid; gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+}
+.cs-catgrid__tile {
+  display: grid; align-content: end; gap: 0.5rem;
+  min-height: 11rem;
+  padding: 1.25rem;
+  border: 2px solid #000000;
+  text-decoration: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.cs-catgrid__tile:hover,
+.cs-catgrid__tile:focus-visible {
+  transform: translate(-3px, -3px);
+  box-shadow: 7px 7px 0 #000000;
+}
+.cs-catgrid__label { opacity: 0.85; }
+.cs-catgrid__title {
+  font-family: var(--font-display, sans-serif);
+  font-size: clamp(1.5rem, 2.8vw, 2.25rem);
+  line-height: 1;
+  text-transform: uppercase;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cs-catgrid__tile, .cs-card, .cs-btn { transition: none; }
+}
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "CS Category Tiles",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-2"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "tile",
+      "name": "Tile",
+      "settings": [
+        { "type": "text", "id": "title", "label": "Title", "default": "Category" },
+        { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Shop" },
+        { "type": "url", "id": "link", "label": "Link" },
+        {
+          "type": "select",
+          "id": "bg",
+          "label": "Tile color",
+          "options": [
+            { "value": "#90D820", "label": "Slime bold" },
+            { "value": "#F860C0", "label": "Hot pink" },
+            { "value": "#5810E8", "label": "Violet" },
+            { "value": "#5058F8", "label": "Periwinkle" },
+            { "value": "#50C898", "label": "Seafoam" },
+            { "value": "#482880", "label": "Deep purple" },
+            { "value": "#E0E8C8", "label": "Sage" },
+            { "value": "#F8C0E0", "label": "Pink wash" }
+          ],
+          "default": "#F860C0"
+        },
+        {
+          "type": "select",
+          "id": "text_color",
+          "label": "Text color (keep AA contrast)",
+          "options": [
+            { "value": "#000000", "label": "Black (for light tiles)" },
+            { "value": "#F8F8F0", "label": "Cream (for dark tiles)" }
+          ],
+          "default": "#000000"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "CS Category Tiles",
+      "blocks": [
+        { "type": "tile", "settings": { "title": "Card Singles", "eyebrow": "TCG", "link": "shopify://collections/card-singles", "bg": "#90D820", "text_color": "#000000" } },
+        { "type": "tile", "settings": { "title": "TCG Sealed", "eyebrow": "TCG", "link": "shopify://collections/tcg-sealed", "bg": "#F860C0", "text_color": "#000000" } },
+        { "type": "tile", "settings": { "title": "Vinyl", "eyebrow": "Music", "link": "shopify://collections/vinyl", "bg": "#5810E8", "text_color": "#F8F8F0" } },
+        { "type": "tile", "settings": { "title": "RPGs", "eyebrow": "Tabletop", "link": "shopify://collections/tabletop-roleplaying-games", "bg": "#50C898", "text_color": "#000000" } },
+        { "type": "tile", "settings": { "title": "Collectibles", "eyebrow": "Artifacts", "link": "shopify://collections/collectibles", "bg": "#482880", "text_color": "#F8F8F0" } },
+        { "type": "tile", "settings": { "title": "The Blog", "eyebrow": "Read", "link": "/blogs/the-cool-story", "bg": "#E0E8C8", "text_color": "#000000" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

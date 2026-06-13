@@ -1,0 +1,118 @@
+{% comment %}
+  Cool Story — homepage hero.
+  Dark field, Mark B wordmark large, one brand statement, one CTA.
+  Wordmark: currently the traced SVG asset (cs-mark-b.svg).
+  TODO(Simon): replace assets/cs-mark-b.svg with the final exported
+  Mark B vector (incl. "Games, Media, and Artifacts" sub-line) when ready.
+  Statement copy is a PLACEHOLDER — needs Simon's sign-off before launch.
+{% endcomment %}
+
+<div class="color-{{ section.settings.color_scheme }} cs-hero cs-on-dark{% if section.settings.animated_bg %} cs-hero--glitch{% endif %}"
+     style="background: {{ section.settings.bg_color }};">
+  {%- if section.settings.animated_bg -%}
+    <canvas
+      class="cs-glitch-canvas"
+      data-cs-glitch-bg
+      data-cs-glitch-dark="true"
+      aria-hidden="true"
+    ></canvas>
+  {%- endif -%}
+  <div class="cs-hero__inner" style="position: relative; z-index: 1;">
+    <img
+      class="cs-hero__wordmark"
+      src="{{ 'cs-mark-b.svg' | asset_url }}"
+      alt="Cool Story"
+      width="1980"
+      height="314"
+      loading="eager"
+    >
+    <p class="cs-hero__sub cs-eyebrow">{{ section.settings.descriptor }}</p>
+    {% if section.settings.statement != blank %}
+      <h1 class="cs-hero__statement">{{ section.settings.statement }}</h1>
+    {% endif %}
+    {% if section.settings.cta_label != blank %}
+      <a class="cs-btn" href="{{ section.settings.cta_link | default: '/collections/all' }}">
+        {{- section.settings.cta_label -}}
+      </a>
+    {% endif %}
+  </div>
+</div>
+
+{% stylesheet %}
+.cs-hero { padding: clamp(3rem, 8vw, 6rem) 1.5rem; text-align: center; position: relative; overflow: hidden; }
+.cs-hero__inner { max-width: 60rem; margin: 0 auto; display: grid; justify-items: center; gap: 1.5rem; }
+.cs-glitch-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  z-index: 0;
+  opacity: 0.9;
+}
+.cs-hero__wordmark { width: min(100%, 44rem); height: auto; }
+.cs-hero__sub { color: #C0F870; margin: 0; font-size: 0.8125rem; }
+.cs-hero__statement {
+  font-family: var(--font-display, sans-serif);
+  font-weight: 400;
+  color: #F8F8F0;
+  font-size: clamp(1.5rem, 3.5vw, 2.5rem);
+  line-height: 1.15;
+  text-transform: uppercase;
+  max-width: 28ch;
+  margin: 0;
+}
+{% endstylesheet %}
+
+{%- if section.settings.animated_bg -%}
+  <script src="{{ 'cs-glitch-bg.js' | asset_url }}" defer></script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "CS Hero",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-5"
+    },
+    {
+      "type": "select",
+      "id": "bg_color",
+      "label": "Background",
+      "options": [
+        { "value": "#000000", "label": "Black (zine mode)" },
+        { "value": "#482880", "label": "Deep purple" }
+      ],
+      "default": "#482880"
+    },
+    {
+      "type": "text",
+      "id": "descriptor",
+      "label": "Descriptor line",
+      "default": "Games, Media, and Artifacts · San Diego, CA"
+    },
+    {
+      "type": "text",
+      "id": "statement",
+      "label": "Brand statement (placeholder — Simon signs off)",
+      "default": "Games, vinyl, collectibles, and artifacts for the curious and the obsessed."
+    },
+    { "type": "text", "id": "cta_label", "label": "CTA label", "default": "Browse the goods" },
+    { "type": "url", "id": "cta_link", "label": "CTA link" },
+    {
+      "type": "checkbox",
+      "id": "animated_bg",
+      "label": "Animated glitch background",
+      "default": false,
+      "info": "GPU-rendered WebGL effect. Flows, breathes, and glitches on a pink/purple palette. Automatically disabled for visitors who prefer reduced motion."
+    }
+  ],
+  "presets": [{ "name": "CS Hero" }]
+}
+{% endschema %}

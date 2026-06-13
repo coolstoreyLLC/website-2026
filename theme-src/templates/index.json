@@ -1,0 +1,114 @@
+{
+  "sections": {
+    "cs_hero": {
+      "type": "cs-hero",
+      "settings": {
+        "bg_color": "#482880",
+        "descriptor": "Games, Media, and Artifacts · San Diego, CA",
+        "statement": "Games, vinyl, collectibles, and artifacts for the curious and the obsessed.",
+        "cta_label": "Browse the goods",
+        "cta_link": "shopify://collections/all"
+      }
+    },
+    "cs_krenkella": {
+      "type": "cs-krenkella-strip",
+      "settings": {
+        "band_color": "#F860C0",
+        "illustration": "shopify://shop_images/cs-krenkella.png",
+        "copy": "She's been eating boosters again. Come see what she found.",
+        "link_label": "See what's new",
+        "link": "shopify://collections/tcg-sealed"
+      }
+    },
+    "cs_categories": {
+      "type": "cs-category-grid",
+      "blocks": {
+        "tile_singles": {
+          "type": "tile",
+          "settings": { "title": "Card Singles", "eyebrow": "TCG", "link": "shopify://collections/card-singles", "bg": "#90D820", "text_color": "#000000" }
+        },
+        "tile_sealed": {
+          "type": "tile",
+          "settings": { "title": "TCG Sealed", "eyebrow": "TCG", "link": "shopify://collections/tcg-sealed", "bg": "#F860C0", "text_color": "#000000" }
+        },
+        "tile_vinyl": {
+          "type": "tile",
+          "settings": { "title": "Vinyl", "eyebrow": "Music", "link": "shopify://collections/vinyl", "bg": "#5810E8", "text_color": "#F8F8F0" }
+        },
+        "tile_rpgs": {
+          "type": "tile",
+          "settings": { "title": "RPGs", "eyebrow": "Tabletop", "link": "shopify://collections/tabletop-roleplaying-games", "bg": "#50C898", "text_color": "#000000" }
+        },
+        "tile_collectibles": {
+          "type": "tile",
+          "settings": { "title": "Collectibles", "eyebrow": "Artifacts", "link": "shopify://collections/collectibles", "bg": "#482880", "text_color": "#F8F8F0" }
+        },
+        "tile_blog": {
+          "type": "tile",
+          "settings": { "title": "The Blog", "eyebrow": "Read", "link": "/blogs/the-cool-story", "bg": "#E0E8C8", "text_color": "#000000" }
+        }
+      },
+      "block_order": ["tile_singles", "tile_sealed", "tile_vinyl", "tile_rpgs", "tile_collectibles", "tile_blog"],
+      "settings": {}
+    },
+    "cs_featured": {
+      "type": "cs-featured-products",
+      "blocks": {
+        "feat_1": { "type": "product", "settings": { "product": "catscans-series-1-blind-box-mini-figure-copy" } },
+        "feat_2": { "type": "product", "settings": { "product": "prismatic-defender-holographic-card-sleeves-oracle" } }
+      },
+      "block_order": ["feat_1", "feat_2"],
+      "settings": {
+        "eyebrow": "Fresh in the case",
+        "heading": "Featured goods"
+      }
+    },
+    "cs_events": {
+      "type": "cs-events",
+      "blocks": {
+        "event_rocketcon": {
+          "type": "event",
+          "settings": {
+            "name": "San Diego RocketCon",
+            "date": "March 14–15",
+            "location": "Del Mar Fairgrounds · San Diego, CA",
+            "url": "https://sdrocketcon.com",
+            "link_label": "Learn more"
+          }
+        }
+      },
+      "block_order": ["event_rocketcon"],
+      "settings": {
+        "eyebrow": "Come say hi",
+        "heading": "IRL Events"
+      }
+    },
+    "cs_blog": {
+      "type": "cs-blog-teaser",
+      "settings": {
+        "eyebrow": "From the shop journal",
+        "heading": "The Cool Story",
+        "blog_handle": "the-cool-story",
+        "post_count": 2
+      }
+    },
+    "cs_about": {
+      "type": "cs-about-strip",
+      "settings": {
+        "eyebrow": "Who we are",
+        "text": "Cool Story is an indie game, vinyl, and collectibles store run out of San Diego. We're building toward a brick-and-mortar community space — every order helps get us there. <3",
+        "link_label": "Our story",
+        "link": "/pages/about-us"
+      }
+    }
+  },
+  "order": [
+    "cs_hero",
+    "cs_krenkella",
+    "cs_categories",
+    "cs_featured",
+    "cs_events",
+    "cs_blog",
+    "cs_about"
+  ]
+}

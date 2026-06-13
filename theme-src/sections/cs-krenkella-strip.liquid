@@ -1,0 +1,108 @@
+{% comment %}
+  Cool Story — Krenkella strip.
+  Horizontal band reserved for the mascot. Ships with an illustrated
+  placeholder frame until Simon supplies real Krenkella art.
+  Copy register: Krenkella voice (campy, warm, never punching down).
+{% endcomment %}
+
+<div class="color-{{ section.settings.color_scheme }} cs-krenkella{% if section.settings.animated_bg %} cs-krenkella--glitch{% endif %}"
+     style="background: {{ section.settings.band_color }};">
+  {%- if section.settings.animated_bg -%}
+    <canvas
+      class="cs-glitch-canvas"
+      data-cs-glitch-bg
+      data-cs-glitch-dark="false"
+      aria-hidden="true"
+    ></canvas>
+  {%- endif -%}
+  <div class="cs-krenkella__inner" style="position: relative; z-index: 1;">
+    <div class="cs-krenkella__art">
+      {% if section.settings.illustration != blank %}
+        {{ section.settings.illustration | image_url: width: 720 | image_tag: alt: 'Krenkella', class: 'cs-krenkella__img', loading: 'lazy' }}
+      {% else %}
+        {% comment %} Placeholder frame — replaced by real illustration from Simon {% endcomment %}
+        <div class="cs-krenkella__placeholder" role="img" aria-label="Krenkella — coming soon">
+          <span class="cs-eyebrow">Krenkella — coming soon</span>
+        </div>
+      {% endif %}
+    </div>
+    <div class="cs-krenkella__copy">
+      <p class="cs-krenkella__line">{{ section.settings.copy }}</p>
+      {% if section.settings.link_label != blank %}
+        <a class="cs-btn cs-btn--cream" href="{{ section.settings.link | default: '/collections/all' }}">{{ section.settings.link_label }}</a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+.cs-krenkella { padding: clamp(2rem, 5vw, 3.5rem) 1.5rem; position: relative; overflow: hidden; }
+.cs-krenkella__inner {
+  max-width: 70rem; margin: 0 auto;
+  display: flex; flex-wrap: wrap; align-items: center; gap: 2rem;
+}
+.cs-krenkella__art { flex: 1 1 16rem; display: grid; place-items: center; }
+.cs-krenkella__img { max-width: 100%; height: auto; }
+.cs-krenkella__placeholder {
+  width: min(100%, 20rem); aspect-ratio: 4 / 3;
+  border: 3px dashed #000000;
+  display: grid; place-items: center;
+  color: #000000; text-align: center; padding: 1rem;
+}
+.cs-krenkella__copy { flex: 1 1 18rem; display: grid; gap: 1.25rem; justify-items: start; }
+.cs-krenkella__line {
+  font-family: var(--font-display, sans-serif);
+  font-size: clamp(1.25rem, 2.6vw, 1.875rem);
+  line-height: 1.2;
+  text-transform: uppercase;
+  color: #000000;
+  margin: 0;
+}
+{% endstylesheet %}
+
+{%- if section.settings.animated_bg -%}
+  <script src="{{ 'cs-glitch-bg.js' | asset_url }}" defer></script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "CS Krenkella Strip",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-2"
+    },
+    {
+      "type": "select",
+      "id": "band_color",
+      "label": "Band color",
+      "options": [
+        { "value": "#F860C0", "label": "Hot pink" },
+        { "value": "#C0F870", "label": "Slime" },
+        { "value": "#F8C0E0", "label": "Pink wash" }
+      ],
+      "default": "#F860C0"
+    },
+    { "type": "image_picker", "id": "illustration", "label": "Krenkella illustration (from Simon)" },
+    {
+      "type": "text",
+      "id": "copy",
+      "label": "Krenkella line",
+      "default": "She's been eating boosters again. Come see what she found."
+    },
+    { "type": "text", "id": "link_label", "label": "Button label", "default": "See what's new" },
+    { "type": "url", "id": "link", "label": "Button link" },
+    {
+      "type": "checkbox",
+      "id": "animated_bg",
+      "label": "Animated glitch background",
+      "default": false,
+      "info": "GPU-rendered WebGL effect — bright/energetic variant. Automatically disabled for visitors who prefer reduced motion."
+    }
+  ],
+  "presets": [{ "name": "CS Krenkella Strip" }]
+}
+{% endschema %}

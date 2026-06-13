@@ -1,0 +1,118 @@
+{% comment %}
+  Cool Story — manually curated featured products (not algorithmic).
+  Cream cards, hard 45° long-shadow hover pop, checkerboard-dissolve
+  add-to-cart feedback (CSS-only animation, reduced-motion safe).
+{% endcomment %}
+
+<div class="color-{{ section.settings.color_scheme }} cs-featured">
+  <div class="cs-featured__inner">
+    <p class="cs-eyebrow">{{ section.settings.eyebrow }}</p>
+    <h2 class="cs-featured__heading">{{ section.settings.heading }}</h2>
+    <div class="cs-featured__grid">
+      {% for block in section.blocks %}
+        {% assign product = block.settings.product %}
+        {% if product != blank %}
+          <div class="cs-card cs-featured__card" {{ block.shopify_attributes }}>
+            <a class="cs-featured__media" href="{{ product.url }}">
+              {% if product.featured_image %}
+                {{ product.featured_image | image_url: width: 640 | image_tag: alt: product.featured_image.alt | default: product.title, loading: 'lazy', class: 'cs-featured__img' }}
+              {% endif %}
+            </a>
+            <div class="cs-featured__body">
+              <a class="cs-featured__title" href="{{ product.url }}">{{ product.title }}</a>
+              <span class="cs-featured__price">
+                {%- if product.compare_at_price > product.price -%}
+                  <s>{{ product.compare_at_price | money }}</s>
+                {%- endif -%}
+                {{ product.price | money }}
+              </span>
+              {% if product.available %}
+                {% form 'product', product, class: 'cs-featured__form' %}
+                  <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+                  <button type="submit" class="cs-btn cs-btn--slime cs-dissolve cs-atc" name="add">
+                    Add to cart
+                  </button>
+                {% endform %}
+              {% else %}
+                <span class="cs-featured__soldout cs-eyebrow">Sold out</span>
+              {% endif %}
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<script>
+  // checkerboard dissolve on add-to-cart click (visual only; form submits normally)
+  document.querySelectorAll('.cs-atc').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      btn.classList.remove('cs-dissolving');
+      void btn.offsetWidth;
+      btn.classList.add('cs-dissolving');
+    });
+  });
+</script>
+
+{% stylesheet %}
+.cs-featured { background: #F8F8F0; padding: clamp(2rem, 5vw, 4rem) 1.5rem; }
+.cs-featured__inner { max-width: 70rem; margin: 0 auto; }
+.cs-featured__heading {
+  font-family: var(--font-display, sans-serif);
+  font-weight: 400;
+  font-size: clamp(1.75rem, 3.5vw, 2.75rem);
+  text-transform: uppercase;
+  margin: 0.25rem 0 1.5rem;
+  color: #000000;
+}
+.cs-featured__grid {
+  display: grid; gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+}
+.cs-featured__card { display: flex; flex-direction: column; }
+.cs-featured__media { display: block; aspect-ratio: 1; overflow: hidden; border-bottom: 2px solid #000000; }
+.cs-featured__img { width: 100%; height: 100%; object-fit: cover; }
+.cs-featured__body { display: grid; gap: 0.6rem; padding: 1rem; justify-items: start; }
+.cs-featured__title {
+  color: #000000; text-decoration: none; font-weight: 600; font-size: 1rem; line-height: 1.3;
+}
+.cs-featured__title:hover { color: #5810E8; text-decoration: underline; }
+.cs-featured__price { color: #000000; font-size: 0.9375rem; }
+.cs-featured__price s { color: #482880; margin-right: 0.4rem; }
+.cs-featured__soldout { color: #482880; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "CS Featured Products",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-2"
+    },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Fresh in the case" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Featured goods" }
+  ],
+  "blocks": [
+    {
+      "type": "product",
+      "name": "Product",
+      "settings": [
+        { "type": "product", "id": "product", "label": "Product" }
+      ]
+    }
+  ],
+  "max_blocks": 3,
+  "presets": [
+    {
+      "name": "CS Featured Products",
+      "blocks": [{ "type": "product" }, { "type": "product" }, { "type": "product" }]
+    }
+  ]
+}
+{% endschema %}

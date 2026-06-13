@@ -1,0 +1,64 @@
+{
+  "type": "footer",
+  "name": "t:names.footer",
+  "sections": {
+    "cs_footer": {
+      "type": "cs-footer",
+      "settings": {
+        "blurb": "Indie game, vinyl, and collectibles store building toward a brick-and-mortar community space. Every order helps get us there. <3",
+        "menu": "cs-footer-dev-1"
+      }
+    },
+    "footer_utilities": {
+      "type": "footer-utilities",
+      "blocks": {
+        "block_ec5a6f05b6d8": {
+          "type": "footer-copyright",
+          "settings": {
+            "show_powered_by": false,
+            "font_size": "0.75rem",
+            "case": "none"
+          },
+          "blocks": {}
+        },
+        "block_879f5d81c6d5": {
+          "type": "footer-policy-list",
+          "settings": {
+            "font_size": "0.75rem",
+            "case": "none"
+          },
+          "blocks": {}
+        },
+        "block_9afaabf93119": {
+          "type": "social-links",
+          "settings": {
+            "facebook_url": "",
+            "instagram_url": "https://www.instagram.com/coolstory.sd",
+            "youtube_url": "https://www.youtube.com/@coolstorygames",
+            "tiktok_url": "https://www.tiktok.com/@coolstorygames",
+            "twitter_url": "",
+            "threads_url": "",
+            "linkedin_url": "",
+            "bluesky_url": "https://bsky.app/profile/coolstorygames.bsky.social",
+            "snapchat_url": "",
+            "pinterest_url": "",
+            "tumblr_url": "",
+            "vimeo_url": "",
+            "custom_url": "https://www.twitch.tv/coolstory_games"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": ["block_ec5a6f05b6d8", "block_879f5d81c6d5", "block_9afaabf93119"],
+      "settings": {
+        "section_width": "page-width",
+        "gap": 24,
+        "divider_thickness": 1,
+        "color_scheme": "scheme-5",
+        "padding-block-start": 20,
+        "padding-block-end": 20
+      }
+    }
+  },
+  "order": ["cs_footer", "footer_utilities"]
+}

@@ -1,0 +1,51 @@
+{% comment %}
+  Cool Story — about / mission strip.
+  Counter voice, sincere. PLACEHOLDER copy until Simon rewrites the
+  real origin story — do not ship to production without his pass.
+{% endcomment %}
+
+<div class="color-{{ section.settings.color_scheme }} cs-about">
+  <div class="cs-about__inner">
+    <p class="cs-eyebrow">{{ section.settings.eyebrow }}</p>
+    <p class="cs-about__text">{{ section.settings.text }}</p>
+    <a class="cs-about__link" href="{{ section.settings.link | default: '/pages/about-us' }}">
+      {{- section.settings.link_label -}}
+    </a>
+  </div>
+</div>
+
+{% stylesheet %}
+.cs-about { background: #F8F8F0; padding: clamp(2.5rem, 6vw, 4.5rem) 1.5rem; }
+.cs-about__inner { max-width: 46rem; margin: 0 auto; text-align: center; display: grid; gap: 1rem; justify-items: center; }
+.cs-about__text { color: #000000; font-size: clamp(1.0625rem, 2vw, 1.25rem); line-height: 1.55; margin: 0; }
+.cs-about__link {
+  color: #5810E8; font-family: var(--font-label, sans-serif);
+  font-size: 0.875rem; letter-spacing: 0.1em; text-transform: uppercase;
+}
+.cs-about__link:hover { color: #000000; }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "CS About Strip",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "Color scheme",
+      "default": "scheme-2"
+    },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Who we are" },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Text (placeholder — Simon rewrites)",
+      "default": "Cool Story is an indie game, vinyl, and collectibles store run out of San Diego. We're building toward a brick-and-mortar community space — every order helps get us there. <3"
+    },
+    { "type": "text", "id": "link_label", "label": "Link label", "default": "Our story" },
+    { "type": "url", "id": "link", "label": "Link" }
+  ],
+  "presets": [{ "name": "CS About Strip" }]
+}
+{% endschema %}
