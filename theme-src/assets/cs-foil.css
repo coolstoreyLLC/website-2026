@@ -1,0 +1,164 @@
+/* ------------------------------------------------------------------
+   Cool Story — foil / etched shimmer on card thumbnails
+
+   Singles synced from Mana Pool carry exactly one printing tag:
+   `foil`, `etched` or `nonfoil`. snippets/product-card.liquid turns the
+   first two into data-cs-printing="foil|etched" on <product-card>; markup
+   we own (e.g. cs-featured-products) uses .cs-foil-surface instead.
+
+   Two stacked pseudo-elements on the image wrapper:
+     ::before  a static iridescent film + fine striations (the "slight
+               reflection" you see at rest in the grid)
+     ::after   a specular highlight that fades in on hover/tap and tracks
+               the pointer via --cs-foil-x / --cs-foil-y (assets/cs-foil.js)
+
+   No JS required: without it the highlight simply sits centred.
+   ------------------------------------------------------------------ */
+
+/* ---- tunables + pointer position (JS writes the vars here) -------- */
+product-card[data-cs-printing],
+.cs-foil-surface {
+  --cs-foil-x: 50%;
+  --cs-foil-y: 32%;
+
+  /* strength of the resting film vs. the hover state. The film blends with
+     color-dodge, so these stay low — past ~0.3 it starts eating the art. */
+  --cs-foil-idle: 0.14;
+  --cs-foil-active: 0.26;
+  --cs-foil-sheen: 0.35;
+
+  /* rainbow film — brand hues (BRAND.md §3) rather than a generic spectrum.
+     Opaque stops: color-dodge needs saturation to shift hue at low opacity. */
+  --cs-foil-film: linear-gradient(
+    115deg,
+    #f860c0 6%,
+    #5810e8 20%,
+    #5058f8 33%,
+    #50c898 47%,
+    #c0f870 61%,
+    #f878f0 76%,
+    #5810e8 92%
+  );
+  --cs-foil-lines: repeating-linear-gradient(
+    105deg,
+    rgba(255, 255, 255, 0.14) 0 2px,
+    rgba(255, 255, 255, 0) 2px 7px
+  );
+  --cs-foil-film-size: 260% 260%;
+}
+
+/* etched foil reads as brushed silver with tighter striations */
+product-card[data-cs-printing='etched'],
+.cs-foil-surface[data-cs-printing='etched'] {
+  --cs-foil-idle: 0.12;
+  --cs-foil-active: 0.22;
+  --cs-foil-sheen: 0.4;
+  --cs-foil-film: linear-gradient(
+    118deg,
+    #e8ecf4 8%,
+    #b8c4d8 26%,
+    #8850f8 44%,
+    #f4f4f8 62%,
+    #a8b4c8 84%
+  );
+  --cs-foil-lines: repeating-linear-gradient(
+    100deg,
+    rgba(255, 255, 255, 0.2) 0 1px,
+    rgba(255, 255, 255, 0) 1px 4px
+  );
+  --cs-foil-film-size: 200% 200%;
+}
+
+/* ---- the surface ------------------------------------------------- */
+product-card[data-cs-printing] .product-media,
+.cs-foil-surface {
+  position: relative;
+  isolation: isolate; /* keep the blend modes off everything but the art */
+  overflow: hidden;
+}
+
+product-card[data-cs-printing] .product-media::before,
+product-card[data-cs-printing] .product-media::after,
+.cs-foil-surface::before,
+.cs-foil-surface::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  border-radius: inherit;
+}
+
+/* iridescent film — always on, so foils are spottable while scrolling */
+product-card[data-cs-printing] .product-media::before,
+.cs-foil-surface::before {
+  background-image: var(--cs-foil-lines), var(--cs-foil-film);
+  background-size: auto, var(--cs-foil-film-size);
+  background-position:
+    0 0,
+    var(--cs-foil-x) var(--cs-foil-y);
+  background-blend-mode: soft-light, normal;
+  mix-blend-mode: color-dodge; /* lifts the hues the way a real foil does */
+  opacity: var(--cs-foil-idle);
+  transition: opacity 0.3s ease, background-position 0.25s ease;
+}
+
+/* specular highlight — follows the pointer */
+product-card[data-cs-printing] .product-media::after,
+.cs-foil-surface::after {
+  background-image: radial-gradient(
+    110% 80% at var(--cs-foil-x) var(--cs-foil-y),
+    rgba(255, 255, 255, 0.85) 0%,
+    rgba(255, 255, 255, 0.22) 18%,
+    rgba(255, 255, 255, 0) 45%
+  );
+  mix-blend-mode: hard-light;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+@media (hover: hover) {
+  product-card[data-cs-printing]:hover .product-media::before,
+  product-card[data-cs-printing]:focus-within .product-media::before,
+  .cs-foil-surface:hover::before,
+  .cs-foil-surface:focus-within::before {
+    opacity: var(--cs-foil-active);
+  }
+
+  product-card[data-cs-printing]:hover .product-media::after,
+  product-card[data-cs-printing]:focus-within .product-media::after,
+  .cs-foil-surface:hover::after,
+  .cs-foil-surface:focus-within::after {
+    opacity: var(--cs-foil-sheen);
+  }
+}
+
+/* touch: a tap gives the same kick, since there is no hover to work with */
+product-card[data-cs-printing]:active .product-media::before,
+.cs-foil-surface:active::before {
+  opacity: var(--cs-foil-active);
+}
+
+product-card[data-cs-printing]:active .product-media::after,
+.cs-foil-surface:active::after {
+  opacity: var(--cs-foil-sheen);
+}
+
+/* ---- accessibility ----------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  product-card[data-cs-printing] .product-media::before,
+  product-card[data-cs-printing] .product-media::after,
+  .cs-foil-surface::before,
+  .cs-foil-surface::after {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  product-card[data-cs-printing] .product-media::before,
+  product-card[data-cs-printing] .product-media::after,
+  .cs-foil-surface::before,
+  .cs-foil-surface::after {
+    display: none;
+  }
+}

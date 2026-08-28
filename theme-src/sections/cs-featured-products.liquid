@@ -12,8 +12,23 @@
       {% for block in section.blocks %}
         {% assign product = block.settings.product %}
         {% if product != blank %}
+          {% comment %} Foil/etched singles get the shimmer overlay (assets/cs-foil.css).
+             Split the tags so "nonfoil" isn't read as a foil. {% endcomment %}
+          {% liquid
+            assign cs_printing = ''
+            assign cs_tags = product.tags | join: '~' | downcase | split: '~'
+            if cs_tags contains 'etched'
+              assign cs_printing = 'etched'
+            elsif cs_tags contains 'foil'
+              assign cs_printing = 'foil'
+            endif
+          %}
           <div class="cs-card cs-featured__card" {{ block.shopify_attributes }}>
-            <a class="cs-featured__media" href="{{ product.url }}">
+            <a
+              class="cs-featured__media{% if cs_printing != blank %} cs-foil-surface{% endif %}"
+              {% if cs_printing != blank %}data-cs-printing="{{ cs_printing }}"{% endif %}
+              href="{{ product.url }}"
+            >
               {% if product.featured_image %}
                 {{ product.featured_image | image_url: width: 640 | image_tag: alt: product.featured_image.alt | default: product.title, loading: 'lazy', class: 'cs-featured__img' }}
               {% endif %}

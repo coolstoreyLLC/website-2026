@@ -38,6 +38,12 @@
     <link href="https://fonts.googleapis.com/css2?family=Audiowide&family=UnifrakturCook:wght@700&family=Work+Sans:ital,wght@0,400;0,600;1,400;1,600&display=swap" rel="stylesheet">
     {{ 'cs-tokens.css' | asset_url | stylesheet_tag }}
 
+    {% comment %} Foil / etched shimmer on card thumbnails. CSS does the work;
+       the script only tracks the pointer so the highlight moves (see
+       assets/cs-foil.css for the data-cs-printing hook). {% endcomment %}
+    {{ 'cs-foil.css' | asset_url | stylesheet_tag }}
+    <script src="{{ 'cs-foil.js' | asset_url }}" defer></script>
+
     {% if request.design_mode %}
       {%- render 'theme-editor' -%}
     {% endif %}
