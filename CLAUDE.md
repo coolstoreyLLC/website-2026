@@ -21,17 +21,32 @@ Before overwriting any file, read the live copy (`theme { files { body } }`)
 and diff it — that is how `{%- render 'mana-symbols' -%}` in
 `layout/theme.liquid` was nearly lost.
 
-## Horizon version updates (the font trap)
+## Horizon version updates (why 4.1.4 "lost all our fonts")
 
-A Shopify theme update replaces base theme files with stock ones. Custom
-*new* files (`assets/cs-*`, `sections/cs-*`, `rc-rocket.woff2`) carry over
-untouched, but **`layout/theme.liquid` gets overwritten** — and that file is
-where the Google Fonts `<link>`, `cs-tokens.css`, `cs-foil.css` and
-`mana-symbols` are wired in. That is why the 4.1.4 update appeared to "lose
-all our fonts". Any base file we override (currently
-`snippets/product-card.liquid`) is overwritten the same way. After an update,
-re-apply those hunks to the updated copy's `layout/theme.liquid` before
-judging the result.
+Investigated 2026-08-28 by diffing the live theme against Shopify's
+"Updated copy of CS Overhaul…" (theme 155599536322). What a theme update
+does, precisely:
+
+- **Custom new files survive byte-for-byte**: `assets/cs-*`, `sections/cs-*`,
+  `snippets/mana-symbols.liquid`, `rc-rocket.woff2`, `templates/index.json`.
+- **Base files we override are replaced with stock.** `layout/theme.liquid`
+  went 2,633 → 7,742 bytes of stock Horizon: no Google Fonts `<link>`, no
+  `cs-tokens.css`, no `mana-symbols`. **That alone is the font loss** — the
+  font files were all still there, just never referenced. Same fate awaits
+  `snippets/product-card.liquid` (our foil hook) and whatever customization
+  lives in `sections/main-collection.liquid`, which differs live vs. stock
+  and is NOT in this repo — capture it before ever running an update.
+- **Global settings are reset to stock defaults.** `config/settings_data.json`
+  went 17,824 → 7,104 bytes: dark Heritage palette (`#202219` bg, cream fg),
+  Instrument Sans / Saira type. 4.1.4 replaces the `color_schemes` model with
+  a single `color_palette` (the layout renders `color-palette` in place of
+  `color-schemes`), so the old schemes cannot be auto-migrated.
+
+So restoring fonts after an update is ~10 lines in `layout/theme.liquid`, but
+a full 4.1.4 migration is a real project: re-apply the layout hunks, rebuild
+the color system in the new palette model, re-apply base-file overrides,
+re-test. The update is optional — nothing breaks by staying put, and the
+admin banner is a suggestion, not a requirement.
 
 ## Product data conventions
 
