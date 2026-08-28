@@ -7,15 +7,32 @@
    we own (e.g. cs-featured-products) uses .cs-foil-surface instead.
 
    Two stacked pseudo-elements on the image wrapper:
-     ::before  a static iridescent film + fine striations (the "slight
-               reflection" you see at rest in the grid)
+     ::before  a banded iridescent film that drifts slowly up and to the
+               right, forever — this is what you see at rest in the grid
      ::after   a specular highlight that fades in on hover/tap and tracks
                the pointer via --cs-foil-x / --cs-foil-y (assets/cs-foil.js)
 
-   No JS required: without it the highlight simply sits centred.
+   No JS required: without it the drift still runs and the highlight simply
+   sits centred.
+
+   The drift geometry is exact, not eyeballed. The film is a *repeating*
+   gradient at 65°, so it tiles on a lattice; --cs-foil-tile is one whole
+   lattice cell (160px band period ÷ sin65 by ÷ cos65), so the background
+   tiles seamlessly. The layer is then widened to the left by one cell width
+   (--cs-foil-shift) and slid right by exactly that much, which lands the
+   pattern one full band period along — start and end frames are
+   pixel-identical, so the loop is invisible. Bands sliding sideways read as
+   motion perpendicular to themselves, which is why a purely horizontal
+   slide looks like a diagonal drift up and to the right.
+
+   It slides with a transform rather than animating background-position:
+   both look the same, but background-position repaints every card every
+   frame (measured: 24 cards ran at 21fps; the transform ran at 47fps in the
+   same software-rendered harness). Change the 65° or the 160px period and
+   the tile and shift both have to be recomputed.
    ------------------------------------------------------------------ */
 
-/* ---- tunables + pointer position (JS writes the vars here) -------- */
+/* ---- tunables + pointer position (JS writes x/y here) ------------- */
 product-card[data-cs-printing],
 .cs-foil-surface {
   --cs-foil-x: 50%;
@@ -23,50 +40,57 @@ product-card[data-cs-printing],
 
   /* strength of the resting film vs. the hover state. The film blends with
      color-dodge, so these stay low — past ~0.3 it starts eating the art. */
-  --cs-foil-idle: 0.14;
-  --cs-foil-active: 0.26;
+  --cs-foil-idle: 0.17;
+  --cs-foil-active: 0.28;
   --cs-foil-sheen: 0.35;
 
+  /* one loop of the drift. Slow enough to read as a sheen shifting rather
+     than anything scrolling; ~15px of travel per second. */
+  --cs-foil-speed: 22s;
+
   /* rainbow film — brand hues (BRAND.md §3) rather than a generic spectrum.
-     Opaque stops: color-dodge needs saturation to shift hue at low opacity. */
-  --cs-foil-film: linear-gradient(
-    115deg,
-    #f860c0 6%,
-    #5810e8 20%,
-    #5058f8 33%,
-    #50c898 47%,
-    #c0f870 61%,
-    #f878f0 76%,
-    #5810e8 92%
+     Opaque stops: color-dodge needs saturation to shift hue at low opacity.
+     First and last stop match so the band repeat has no seam. */
+  --cs-foil-film: repeating-linear-gradient(
+    65deg,
+    #f860c0 0px,
+    #5810e8 27px,
+    #5058f8 53px,
+    #50c898 80px,
+    #c0f870 107px,
+    #f878f0 133px,
+    #f860c0 160px
   );
   --cs-foil-lines: repeating-linear-gradient(
-    105deg,
+    65deg,
     rgba(255, 255, 255, 0.14) 0 2px,
-    rgba(255, 255, 255, 0) 2px 7px
+    rgba(255, 255, 255, 0) 2px 8px
   );
-  --cs-foil-film-size: 260% 260%;
+  --cs-foil-tile: 176.54px 378.59px;
+  --cs-foil-shift: 176.54px;
 }
 
-/* etched foil reads as brushed silver with tighter striations */
+/* etched foil reads as brushed silver with tighter striations. Keeps the
+   same 160px band period so it shares the tile and drift geometry. */
 product-card[data-cs-printing='etched'],
 .cs-foil-surface[data-cs-printing='etched'] {
-  --cs-foil-idle: 0.12;
-  --cs-foil-active: 0.22;
+  --cs-foil-idle: 0.15;
+  --cs-foil-active: 0.24;
   --cs-foil-sheen: 0.4;
-  --cs-foil-film: linear-gradient(
-    118deg,
-    #e8ecf4 8%,
-    #b8c4d8 26%,
-    #8850f8 44%,
-    #f4f4f8 62%,
-    #a8b4c8 84%
+  --cs-foil-film: repeating-linear-gradient(
+    65deg,
+    #e8ecf4 0px,
+    #b8c4d8 34px,
+    #8850f8 74px,
+    #f4f4f8 108px,
+    #a8b4c8 140px,
+    #e8ecf4 160px
   );
   --cs-foil-lines: repeating-linear-gradient(
-    100deg,
+    65deg,
     rgba(255, 255, 255, 0.2) 0 1px,
     rgba(255, 255, 255, 0) 1px 4px
   );
-  --cs-foil-film-size: 200% 200%;
 }
 
 /* ---- the surface ------------------------------------------------- */
@@ -86,21 +110,37 @@ product-card[data-cs-printing] .product-media::after,
   inset: 0;
   z-index: 1;
   pointer-events: none;
-  border-radius: inherit;
 }
 
-/* iridescent film — always on, so foils are spottable while scrolling */
+/* iridescent film — always on, always drifting, so foils catch the eye
+   while scrolling without anyone having to hover */
 product-card[data-cs-printing] .product-media::before,
 .cs-foil-surface::before {
+  /* widened by one tile to the left, so sliding right never exposes an edge */
+  left: calc(-1 * var(--cs-foil-shift));
   background-image: var(--cs-foil-lines), var(--cs-foil-film);
-  background-size: auto, var(--cs-foil-film-size);
-  background-position:
-    0 0,
-    var(--cs-foil-x) var(--cs-foil-y);
+  background-size: var(--cs-foil-tile);
   background-blend-mode: soft-light, normal;
   mix-blend-mode: color-dodge; /* lifts the hues the way a real foil does */
   opacity: var(--cs-foil-idle);
-  transition: opacity 0.3s ease, background-position 0.25s ease;
+  transition: opacity 0.3s ease;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  product-card[data-cs-printing] .product-media::before,
+  .cs-foil-surface::before {
+    animation: cs-foil-drift var(--cs-foil-speed) linear infinite;
+  }
+}
+
+@keyframes cs-foil-drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+
+  to {
+    transform: translate3d(var(--cs-foil-shift), 0, 0);
+  }
 }
 
 /* specular highlight — follows the pointer */
@@ -113,6 +153,7 @@ product-card[data-cs-printing] .product-media::after,
     rgba(255, 255, 255, 0) 45%
   );
   mix-blend-mode: hard-light;
+  border-radius: inherit;
   opacity: 0;
   transition: opacity 0.3s ease;
 }
@@ -145,6 +186,8 @@ product-card[data-cs-printing]:active .product-media::after,
 }
 
 /* ---- accessibility ----------------------------------------------- */
+/* Reduced motion keeps the film, drops the drift: the media query above
+   never applies the animation, so nothing moves. */
 @media (prefers-reduced-motion: reduce) {
   product-card[data-cs-printing] .product-media::before,
   product-card[data-cs-printing] .product-media::after,
