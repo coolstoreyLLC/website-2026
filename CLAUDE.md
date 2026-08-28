@@ -13,8 +13,22 @@ Horizon living in the Shopify admin.
 - Push with `themeFilesUpsert` against the duplicate's ID, then confirm the
   returned `size` matches the local file byte-for-byte.
 - Preview URL shape: `https://coolstory.shop/?preview_theme_id=<theme id>`.
+- **Re-check which theme is MAIN immediately before duplicating.** Parallel
+  agent sessions publish their own drafts, so MAIN changes underfoot: on
+  2026-08-28 a preview built at 03:44 was already stale by 04:42, when
+  "CS Overhaul + subcollection rows (draft)" became MAIN. Duplicating the
+  *current* MAIN inherits the other session's work for free; building on a
+  stale duplicate would silently revert it on activation.
+- `themeFilesCopy` only copies within one theme (`ThemeFilesCopyFileInput`
+  has no source-theme field), so cross-theme moves mean re-upserting bodies.
 
 ## Repo ↔ theme drift
+
+Known live-only work, not committed anywhere as of 2026-08-28:
+`sections/cs-subcollection-rows.liquid` (12,007 bytes) and the rewritten
+`templates/collection.books.json`, both from the subcollection-rows session.
+Branch `claude/magic-set-art-collections-deoz25` holds that session's earlier
+set-grid work but not these two files.
 
 The live theme can be edited in the admin, so it may be ahead of this repo.
 Before overwriting any file, read the live copy (`theme { files { body } }`)
